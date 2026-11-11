@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node
+{
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+/* Insert at the end */
+void insertEnd(int value)
+{
+    struct Node *newNode;
+    struct Node *last;
+
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    if (head == NULL)
+    {
+        head = newNode;
+        newNode->next = head;
+        newNode->prev = head;
+    }
+    else
+    {
+        last = head->prev;
+        newNode->next = head;
+        newNode->prev = last;
+
+        last->next = newNode;
+        head->prev = newNode;
+    }
+}
+
+/* Delete a destination by ID */
+void deleteKey(int key)
+{
+    struct Node *temp;
+
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+
+    temp = head;
+
+    do
+    {
+        if (temp->data == key)
+        {
+            /* Only one node */
+            if (temp->next == head && temp->prev == head)
+            {
+                head = NULL;
+            }
+            else
+            {
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+
+                if (temp == head)
+                    head = temp->next;
+            }
+
+            free(temp);
+            printf("Destination %d deleted\n", key);
+            return;
+        }
+
+        temp = temp->next;
+
+    } while (temp != head);
+
+    printf("Destination %d not found\n", key);
+}
+
+/* Display in forward direction */
+void displayForward()
+{
+    struct Node *temp;
+
+    if (head == NULL)
+    {
+        printf("Itinerary is empty\n");
+        return;
+    }
+
+    temp = head;
+    printf("Forward itinerary: ");
+
+    do
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+
+    } while (temp != head);
+
+    printf("\n");
+}
+
+/* Display in reverse direction */
+void displayReverse()
+{
+    struct Node *temp;
+
+    if (head == NULL)
+    {
+        printf("Itinerary is empty\n");
+        return;
+    }
+
+    temp = head->prev;
+    printf("Reverse itinerary: ");
+
+    do
+    {
+        printf("%d ", temp->data);
+        temp = temp->prev;
+
+    } while (temp != head->prev);
+
+    printf("\n");
+}
+
+int main()
+{
+    int choice, value;
+
+    while (1)
+    {
+        printf("\n--- Circular Doubly Linked List ---\n");
+        printf("1. Insert at End\n");
+        printf("2. Delete by Destination ID\n");
+        printf("3. Display Forward\n");
+        printf("4. Display Reverse\n");
+        printf("5. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+                printf("Enter Destination ID: ");
+                scanf("%d", &value);
+                insertEnd(value);
+                break;
+
+            case 2:
+                printf("Enter Destination ID to delete: ");
+                scanf("%d", &value);
+                deleteKey(value);
+                break;
+
+            case 3:
+                displayForward();
+                break;
+
+            case 4:
+                displayReverse();
+                break;
+
+            case 5:
+                exit(0);
+
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
