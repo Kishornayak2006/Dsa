@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Structure for a BST node */
+struct node
+{
+    int empID;
+    struct node *left;
+    struct node *right;
+};
+
+/* Create a new node */
+struct node* createNode(int id)
+{
+    struct node *newNode;
+
+    newNode = (struct node*)malloc(sizeof(struct node));
+
+    newNode->empID = id;
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    return newNode;
+}
+
+/* Insert an employee ID into the BST */
+struct node* insert(struct node *root, int id)
+{
+    if (root == NULL)
+        return createNode(id);
+
+    if (id < root->empID)
+        root->left = insert(root->left, id);
+    else if (id > root->empID)
+        root->right = insert(root->right, id);
+
+    return root;
+}
+
+/* In-order traversal */
+void inorder(struct node *root)
+{
+    if (root != NULL)
+    {
+        inorder(root->left);
+        printf("%d ", root->empID);
+        inorder(root->right);
+    }
+}
+
+/* Pre-order traversal */
+void preorder(struct node *root)
+{
+    if (root != NULL)
+    {
+        printf("%d ", root->empID);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+/* Post-order traversal */
+void postorder(struct node *root)
+{
+    if (root != NULL)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->empID);
+    }
+}
+
+/* Level-order traversal */
+void levelorder(struct node *root)
+{
+    struct node *queue[100];
+    int front = 0, rear = 0;
+
+    if (root == NULL)
+        return;
+
+    queue[rear++] = root;
+
+    while (front < rear)
+    {
+        struct node *temp = queue[front++];
+
+        printf("%d ", temp->empID);
+
+        if (temp->left != NULL)
+            queue[rear++] = temp->left;
+
+        if (temp->right != NULL)
+            queue[rear++] = temp->right;
+    }
+}
+
+/* Count leaf nodes */
+int countLeaf(struct node *root)
+{
+    if (root == NULL)
+        return 0;
+
+    if (root->left == NULL && root->right == NULL)
+        return 1;
+
+    return countLeaf(root->left) + countLeaf(root->right);
+}
+
+/* Count non-leaf nodes */
+int countNonLeaf(struct node *root)
+{
+    if (root == NULL)
+        return 0;
+
+    if (root->left == NULL && root->right == NULL)
+        return 0;
+
+    return 1 + countNonLeaf(root->left) + countNonLeaf(root->right);
+}
+
+/* Main function */
+int main()
+{
+    struct node *root = NULL;
+    int n, id, i;
+
+    printf("Enter the number of employees: ");
+    scanf("%d", &n);
+
+    printf("Enter the employee IDs:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &id);
+        root = insert(root, id);
+    }
+
+    printf("\nIn-order Traversal: ");
+    inorder(root);
+
+    printf("\nPre-order Traversal: ");
+    preorder(root);
+
+    printf("\nPost-order Traversal: ");
+    postorder(root);
+
+    printf("\nLevel-order Traversal: ");
+    levelorder(root);
+
+    printf("\n\nTotal number of Leaf Nodes: %d",
+           countLeaf(root));
+
+    printf("\nTotal number of Non-Leaf Nodes: %d",
+           countNonLeaf(root));
+
+    return 0;
+}
